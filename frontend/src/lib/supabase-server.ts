@@ -38,6 +38,32 @@ export function getSupabaseAdminClient() {
   return adminClient;
 }
 
+export async function registerUserWithPassword(input: {
+  email: string;
+  password: string;
+  name?: string;
+}) {
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase.auth.admin.createUser({
+    email: input.email,
+    password: input.password,
+    email_confirm: true,
+    user_metadata: {
+      name: input.name?.trim() || undefined,
+    },
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  if (data.user) {
+    await ensureUserProfile(data.user);
+  }
+
+  return data.user;
+}
+
 function getBearerToken(request: Request) {
   const authHeader = request.headers.get('authorization') || '';
   if (!authHeader.startsWith('Bearer ')) {

@@ -97,27 +97,21 @@ export default function LoginPage() {
       const supabase = getSupabaseClient();
 
       if (mode === "signup") {
-        const { data, error } = await supabase.auth.signUp({
+        await apiClient.post("/auth/register", {
           email,
           password,
-          options: {
-            data: {
-              name,
-            },
-          },
+          name,
+        });
+
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
         });
 
         if (error) {
           throw error;
         }
-
-        if (!data.session) {
-          setInfoMessage(
-            "Conta criada. Se o projeto exigir confirmação, verifique seu e-mail para continuar."
-          );
-        } else {
-          setInfoMessage("Conta criada com sucesso. Preparando seu acesso...");
-        }
+        setInfoMessage("Conta criada com sucesso. Preparando seu acesso...");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,

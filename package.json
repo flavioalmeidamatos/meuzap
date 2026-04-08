@@ -1,5 +1,12 @@
 {
+  "private": true,
+  "scripts": {
+    "setup": "npm install && npm --prefix bridge install && npm --prefix frontend install",
+    "dev": "concurrently -n bridge,frontend -c cyan,green \"npm --prefix bridge run dev\" \"npm --prefix frontend run dev\"",
+    "build": "npm --prefix bridge run build && npm --prefix frontend run build"
+  },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "supabase": "^2.87.2"
   }
 }
